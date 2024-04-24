@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A0093E98-05A2-4240-A3CA-1DC5EF8C792D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ObjectEditor</RootNamespace>
+    <AssemblyName>ObjectEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="classes\DataGridView\ButtonCell.cs" />
+    <Compile Include="classes\DataGridView\ComboBoxCell.cs" />
+    <Compile Include="classes\DataGridView\TextboxButtonCellEditingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="classes\DataGridView\PasswordTextbox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="classes\DataGridView\TextBoxCell.cs" />
+    <Compile Include="classes\EditorField\EditorButtonField\EditorButtonField.cs" />
+    <Compile Include="classes\EditorField\EditorButtonField\EditorButtonMethodField.cs" />
+    <Compile Include="classes\EditorField\EditorComboField\EditorBoolField.cs" />
+    <Compile Include="classes\EditorField\EditorComboField\EditorComboField.cs" />
+    <Compile Include="classes\EditorField\EditorComboObjectField.cs" />
+    <Compile Include="classes\EditorField\EditorComboField\EditorComboStringField.cs" />
+    <Compile Include="classes\EditorField\EditorComboField\EditorEnumField.cs" />
+    <Compile Include="classes\EditorField\EditorField.cs" />
+    <Compile Include="classes\EditorField\EditorButtonField\EditorListObjectField.cs" />
+    <Compile Include="classes\EditorField\EditorSubField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorDecimalField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorDoubleField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorIntField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorLabelField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorLongField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorStringField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorStringListField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorTextField.cs" />
+    <Compile Include="classes\EditorField\EditorTextField\EditorUIntField.cs" />
+    <Compile Include="classes\EditorField\EditorValueField\EditorValueField.cs" />
+    <Compile Include="DataGridButtonCell.cs" />
+    <Compile Include="classes\DataGridView\DataGridViewExtended.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FieldData.cs" />
+    <Compile Include="classes\helpers.cs" />
+    <Compile Include="frmObjectDictionaryEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmObjectDictionaryEditor.Designer.cs">
+      <DependentUpon>frmObjectDictionaryEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmObjectEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmObjectEditor.Designer.cs">
+      <DependentUpon>frmObjectEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextboxButtonControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextboxButtonControl.Designer.cs">
+      <DependentUpon>TextboxButtonControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MethodData.cs" />
+    <Compile Include="ObjectEditors.cs" />
+    <Compile Include="ObjectEditorInfo.cs" />
+    <Compile Include="frmObjectListEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmObjectListEditor.Designer.cs">
+      <DependentUpon>frmObjectListEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="frmObjectDictionaryEditor.resx">
+      <DependentUpon>frmObjectDictionaryEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmObjectEditor.resx">
+      <DependentUpon>frmObjectEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmObjectListEditor.resx">
+      <DependentUpon>frmObjectListEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextboxButtonControl.resx">
+      <DependentUpon>TextboxButtonControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Json\Json\Json.csproj">
+      <Project>{0a79986e-c08c-44cd-8537-0f5bb3b69879}</Project>
+      <Name>Json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ObjectEditor.Attributes\ObjectEditor.Attributes.csproj">
+      <Project>{d93a19d0-9e32-4583-aa3b-7bb68be59a1f}</Project>
+      <Name>ObjectEditor.Attributes</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DownArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\UpArrow.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
