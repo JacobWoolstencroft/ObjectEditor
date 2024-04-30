@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using ObjectEditor.Attributes;
-using Json;
 
 namespace ObjectEditor
 {
@@ -18,6 +17,8 @@ namespace ObjectEditor
         Dictionary<string, T> objectDict;
         string ObjectDesc;
         private ObjectEditorInfo editorInfo = new ObjectEditorInfo();
+        private ObjectEditors.ImportDictionaryDelegate<T> importFunction = null;
+        private ObjectEditors.ExportDictionaryDelegate<T> exportFunction = null;
 
         private string keyDescription = "TEMP_DESC";
         private string keyCategory = EditorField.DEFAULT_CATEGORY;
@@ -42,13 +43,15 @@ namespace ObjectEditor
             public T Value;
         }
 
-        internal frmObjectDictionaryEditor(string Title, Dictionary<string, T> objectDict, ObjectEditorInfo editorInfo)
+        internal frmObjectDictionaryEditor(string Title, Dictionary<string, T> objectDict, ObjectEditorInfo editorInfo, ObjectEditors.ImportDictionaryDelegate<T> importFunction, ObjectEditors.ExportDictionaryDelegate<T> exportFunction)
         {
             InitializeComponent();
             if (Title != null)
                 this.Text = Title;
             this.objectDict = objectDict;
             this.editorInfo = editorInfo;
+            this.importFunction = importFunction;
+            this.exportFunction = exportFunction;
 
             EditableObjectAttribute editableObject = typeof(T).GetCustomAttribute<EditableObjectAttribute>();
             if (editableObject != null)
@@ -108,9 +111,8 @@ namespace ObjectEditor
             RefreshList();
             lstRules.ResizeColumns();
 
-            bool IsIImportable = typeof(IJsonPackable).IsAssignableFrom(typeof(T)) && editorInfo.JsonPackager != null;
-            btnImport.Visible = IsIImportable;
-            btnExport.Visible = IsIImportable;
+            btnImport.Visible = (importFunction != null);
+            btnExport.Visible = (exportFunction != null);
 
             if (!editorInfo.Editable)
             {
@@ -379,57 +381,41 @@ namespace ObjectEditor
 
         private void btnExport_Click(object sender, EventArgs e)
         {
-            if (typeof(IJsonPackable).IsAssignableFrom(typeof(T)) && editorInfo.JsonPackager != null)
+            if (exportFunction != null)
             {
-                SaveFileDialog fd = new SaveFileDialog();
-                fd.DefaultExt = ".json";
-                fd.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*";
-                fd.OverwritePrompt = true;
-
-                if (fd.ShowDialog() == DialogResult.OK)
+                try
                 {
-                    try
-                    {
-                        string json = editorInfo.JsonPackager.Package(objectDict).ToJsonString();
-
-                        System.IO.File.WriteAllText(fd.FileName, json);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    exportFunction(objectDict);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            if (typeof(IJsonPackable).IsAssignableFrom(typeof(T)) && editorInfo.JsonPackager != null)
+            if (importFunction != null)
             {
-                OpenFileDialog fd = new OpenFileDialog();
-                fd.DefaultExt = ".json";
-                fd.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*";
-                fd.CheckFileExists = true;
-                fd.Multiselect = false;
-
-                if (fd.ShowDialog() == DialogResult.OK)
+                try
                 {
-                    try
-                    {
-                        string json = System.IO.File.ReadAllText(fd.FileName);
-                        Dictionary<string, T> newDict = editorInfo.JsonPackager.Unpackage<Dictionary<string, T>>(json);
+                    Dictionary<string, T> newDict;
 
-                        objectDict.Clear();
-                        foreach (KeyValuePair<string, T> ob in newDict)
-                        {
-                            objectDict.Add(ob.Key, ob.Value);
-                        }
-                        RefreshList();
-                    }
-                    catch (Exception ex)
+                    newDict = importFunction();
+                    if (newDict == null)
+                        return;
+
+                    objectDict.Clear();
+                    foreach (KeyValuePair<string, T> ob in newDict)
                     {
-                        MessageBox.Show(ex.Message, "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        objectDict.Add(ob.Key, ob.Value);
                     }
+                    RefreshList();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

@@ -11,7 +11,6 @@ namespace ObjectEditor
         public bool Editable = true;
         public Dictionary<string, List<string>> StringLists = null;
         public Dictionary<string, List<object>> ObjectLists = null;
-        public Json.JsonPackager JsonPackager = null;
 
         public void AddStringList(string key, List<string> list)
         {

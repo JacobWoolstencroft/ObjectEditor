@@ -132,10 +132,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Json\Json\Json.csproj">
-      <Project>{0a79986e-c08c-44cd-8537-0f5bb3b69879}</Project>
-      <Name>Json</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ObjectEditor.Attributes\ObjectEditor.Attributes.csproj">
       <Project>{d93a19d0-9e32-4583-aa3b-7bb68be59a1f}</Project>
       <Name>ObjectEditor.Attributes</Name>

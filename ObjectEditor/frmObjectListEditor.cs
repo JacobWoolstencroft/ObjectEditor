@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using ObjectEditor.Attributes;
-using Json;
 
 namespace ObjectEditor
 {
@@ -20,6 +19,8 @@ namespace ObjectEditor
         List<T> objectList;
         string ObjectDesc;
         private ObjectEditorInfo editorInfo = new ObjectEditorInfo();
+        private ObjectEditors.ImportListDelegate<T> importFunction = null;
+        private ObjectEditors.ExportListDelegate<T> exportFunction = null;
 
         private class ColumnInfo
         {
@@ -33,13 +34,15 @@ namespace ObjectEditor
             public ColumnHeader columnHeader;
         }
 
-        internal frmObjectListEditor(string Title, List<T> objectList, ObjectEditorInfo editorInfo)
+        internal frmObjectListEditor(string Title, List<T> objectList, ObjectEditorInfo editorInfo, ObjectEditors.ImportListDelegate<T> importFunction, ObjectEditors.ExportListDelegate<T> exportFunction)
         {
             InitializeComponent();
             if (Title != null)
                 this.Text = Title;
             this.objectList = objectList;
             this.editorInfo = editorInfo;
+            this.importFunction = importFunction;
+            this.exportFunction = exportFunction;
 
             EditableObjectAttribute editableObject = typeof(T).GetCustomAttribute<EditableObjectAttribute>();
             if (editableObject != null)
@@ -96,9 +99,8 @@ namespace ObjectEditor
             RefreshList();
             lstRules.ResizeColumns();
 
-            bool IsIImportable = typeof(IJsonPackable).IsAssignableFrom(typeof(T)) && editorInfo.JsonPackager != null;
-            btnImport.Visible = IsIImportable;
-            btnExport.Visible = IsIImportable;
+            btnImport.Visible = (importFunction != null);
+            btnExport.Visible = (exportFunction != null);
 
             if (!editorInfo.Editable)
             {
@@ -308,57 +310,40 @@ namespace ObjectEditor
 
         private void btnExport_Click(object sender, EventArgs e)
         {
-            if (typeof(IJsonPackable).IsAssignableFrom(typeof(T)) && editorInfo.JsonPackager != null)
+            if (exportFunction != null)
             {
-                SaveFileDialog fd = new SaveFileDialog();
-                fd.DefaultExt = ".json";
-                fd.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*";
-                fd.OverwritePrompt = true;
-
-                if (fd.ShowDialog() == DialogResult.OK)
+                try
                 {
-                    try
-                    {
-                        string json = editorInfo.JsonPackager.Package(objectList).ToJsonString();
-
-                        System.IO.File.WriteAllText(fd.FileName, json);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    exportFunction(objectList);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            if (typeof(IJsonPackable).IsAssignableFrom(typeof(T)) && editorInfo.JsonPackager != null)
+            if (importFunction != null)
             {
-                OpenFileDialog fd = new OpenFileDialog();
-                fd.DefaultExt = ".json";
-                fd.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*";
-                fd.CheckFileExists = true;
-                fd.Multiselect = false;
-
-                if (fd.ShowDialog() == DialogResult.OK)
+                try
                 {
-                    try
-                    {
-                        string json = System.IO.File.ReadAllText(fd.FileName);
-                        List<T> list = editorInfo.JsonPackager.Unpackage<List<T>>(json);
+                    List<T> list = importFunction();
 
-                        objectList.Clear();
-                        foreach (T ob in list)
-                        {
-                            objectList.Add(ob);
-                        }
-                        RefreshList();
-                    }
-                    catch (Exception ex)
+                    if (list == null)
+                        return;
+
+                    objectList.Clear();
+                    foreach (T ob in list)
                     {
-                        MessageBox.Show(ex.Message, "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        objectList.Add(ob);
                     }
+                    RefreshList();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 

@@ -28,14 +28,86 @@ namespace ObjectEditor.Tests
         private void button1_Click(object sender, EventArgs e)
         {
             ObjectEditorInfo info = new ObjectEditorInfo();
-            info.JsonPackager = new Json.JsonPackager(System.Reflection.Assembly.GetAssembly(typeof(DictionaryTestClass)));
 
             Dictionary<string, DictionaryTestClass> copy = dictionaryTest.Copy();
-            if (ObjectEditors.ShowDictionaryEditor("Dictionary Test", copy, info) == DialogResult.OK)
+            if (ObjectEditors.ShowDictionaryEditor("Dictionary Test", copy, info, importFunction: JsonImportDictionary<DictionaryTestClass>, exportFunction: JsonExportDictionary<DictionaryTestClass>) == DialogResult.OK)
             {
                 dictionaryTest.SetRange(copy);
             }
         }
+
+
+        public Dictionary<string, T> JsonImportDictionary<T>()
+        {
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.DefaultExt = ".json";
+            fd.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*";
+            fd.CheckFileExists = true;
+            fd.Multiselect = false;
+
+            Json.JsonPackager packager = new Json.JsonPackager(System.Reflection.Assembly.GetAssembly(typeof(T)));
+
+            if (fd.ShowDialog() == DialogResult.OK)
+            {
+                string json = System.IO.File.ReadAllText(fd.FileName);
+                Dictionary<string, T> newDict = packager.Unpackage<Dictionary<string, T>>(json);
+
+                return newDict;
+            }
+            return null;
+        }
+        public void JsonExportDictionary<T>(Dictionary<string, T> data)
+        {
+            Json.JsonPackager packager = new Json.JsonPackager(System.Reflection.Assembly.GetAssembly(typeof(T)));
+
+            SaveFileDialog fd = new SaveFileDialog();
+            fd.DefaultExt = ".json";
+            fd.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*";
+            fd.OverwritePrompt = true;
+
+            if (fd.ShowDialog() == DialogResult.OK)
+            {
+                string json = packager.Package(data).ToJsonString();
+
+                System.IO.File.WriteAllText(fd.FileName, json);
+            }
+        }
+        public List<T> JsonImportList<T>()
+        {
+            Json.JsonPackager packager = new Json.JsonPackager(System.Reflection.Assembly.GetAssembly(typeof(T)));
+
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.DefaultExt = ".json";
+            fd.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*";
+            fd.CheckFileExists = true;
+            fd.Multiselect = false;
+
+            if (fd.ShowDialog() == DialogResult.OK)
+            {
+                string json = System.IO.File.ReadAllText(fd.FileName);
+                List<T> list = packager.Unpackage<List<T>>(json);
+
+                return list;
+            }
+            return null;
+        }
+        public void JsonExportList<T>(List<T> list)
+        {
+            Json.JsonPackager packager = new Json.JsonPackager(System.Reflection.Assembly.GetAssembly(typeof(T)));
+
+            SaveFileDialog fd = new SaveFileDialog();
+            fd.DefaultExt = ".json";
+            fd.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*";
+            fd.OverwritePrompt = true;
+
+            if (fd.ShowDialog() == DialogResult.OK)
+            {
+                string json = packager.Package(list).ToJsonString();
+
+                System.IO.File.WriteAllText(fd.FileName, json);
+            }
+        }
+
 
         EnumTestClass testEnum = new EnumTestClass();
         private void button2_Click(object sender, EventArgs e)
@@ -47,7 +119,7 @@ namespace ObjectEditor.Tests
         private void button3_Click(object sender, EventArgs e)
         {
             List<ListTestClass> copy = listTest.Copy();
-            if (ObjectEditors.ShowListEditor("List Test", copy, null) == DialogResult.OK)
+            if (ObjectEditors.ShowListEditor("List Test", copy, null, importFunction: JsonImportList<ListTestClass>, exportFunction: JsonExportList<ListTestClass>) == DialogResult.OK)
                 listTest.SetRange(copy);
         }
 
