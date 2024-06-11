@@ -9,6 +9,7 @@ namespace ObjectEditor
     public class ObjectEditorInfo
     {
         public bool Editable = true;
+        public bool HideFromScreenShare = false;
         public Dictionary<string, List<string>> StringLists = null;
         public Dictionary<string, List<object>> ObjectLists = null;
 

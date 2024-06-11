@@ -37,6 +37,8 @@ namespace ObjectEditor
         internal frmObjectListEditor(string Title, List<T> objectList, ObjectEditorInfo editorInfo, ObjectEditors.ImportListDelegate<T> importFunction, ObjectEditors.ExportListDelegate<T> exportFunction)
         {
             InitializeComponent();
+            if (editorInfo.HideFromScreenShare)
+                this.SetHiddenFromScreenShare(true);
             if (Title != null)
                 this.Text = Title;
             this.objectList = objectList;

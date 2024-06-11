@@ -21,13 +21,16 @@ namespace ObjectEditor.Tests
         ButtonTestClass buttonTest = new ButtonTestClass();
         private void btnButtonTest_Click(object sender, EventArgs e)
         {
-            ObjectEditors.ShowObjectEditor("Button Test", buttonTest, null);
+            ObjectEditorInfo editorInfo = new ObjectEditorInfo();
+            editorInfo.HideFromScreenShare = true;
+            ObjectEditors.ShowObjectEditor("Button Test", buttonTest, editorInfo);
         }
 
         readonly Dictionary<string, DictionaryTestClass> dictionaryTest = new Dictionary<string, DictionaryTestClass>();
         private void button1_Click(object sender, EventArgs e)
         {
             ObjectEditorInfo info = new ObjectEditorInfo();
+            info.HideFromScreenShare = true;
 
             Dictionary<string, DictionaryTestClass> copy = dictionaryTest.Copy();
             if (ObjectEditors.ShowDictionaryEditor("Dictionary Test", copy, info, importFunction: JsonImportDictionary<DictionaryTestClass>, exportFunction: JsonExportDictionary<DictionaryTestClass>) == DialogResult.OK)
@@ -118,8 +121,10 @@ namespace ObjectEditor.Tests
         List<ListTestClass> listTest = new List<ListTestClass>();
         private void button3_Click(object sender, EventArgs e)
         {
+            ObjectEditorInfo info = new ObjectEditorInfo();
+            info.HideFromScreenShare = true;
             List<ListTestClass> copy = listTest.Copy();
-            if (ObjectEditors.ShowListEditor("List Test", copy, null, importFunction: JsonImportList<ListTestClass>, exportFunction: JsonExportList<ListTestClass>) == DialogResult.OK)
+            if (ObjectEditors.ShowListEditor("List Test", copy, info, importFunction: JsonImportList<ListTestClass>, exportFunction: JsonExportList<ListTestClass>) == DialogResult.OK)
                 listTest.SetRange(copy);
         }
 

@@ -46,6 +46,8 @@ namespace ObjectEditor
         internal frmObjectDictionaryEditor(string Title, Dictionary<string, T> objectDict, ObjectEditorInfo editorInfo, ObjectEditors.ImportDictionaryDelegate<T> importFunction, ObjectEditors.ExportDictionaryDelegate<T> exportFunction)
         {
             InitializeComponent();
+            if (editorInfo.HideFromScreenShare)
+                this.SetHiddenFromScreenShare(true);
             if (Title != null)
                 this.Text = Title;
             this.objectDict = objectDict;

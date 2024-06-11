@@ -33,6 +33,8 @@ namespace ObjectEditor
         internal frmObjectEditor(string Title, List<EditorField> Fields, object ObjectBeingEditted, List<string> PreferredCategoryOrder, ObjectEditorInfo editorInfo)
         {
             InitializeComponent();
+            if (editorInfo.HideFromScreenShare)
+                this.SetHiddenFromScreenShare(true);
             this.Text = Title;
             this.editorInfo = editorInfo;
             this.ObjectBeingEditted = ObjectBeingEditted;

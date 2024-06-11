@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace ObjectEditor
@@ -73,6 +74,19 @@ namespace ObjectEditor
             {
                 lst.Columns[x].Width = -2;
             }
+        }
+
+        [DllImport("user32.dll")]
+        private static extern uint SetWindowDisplayAffinity(IntPtr hwnd, uint dwAffinity);
+        private const uint WDA_NONE = 0x00000000; //Imposes no restrictions on where the window can be displayed.
+        private const uint WDA_MONITOR = 0x00000001; //The window content is displayed only on a monitor.Everywhere else, the window appears with no content.
+        private const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011; //The window is displayed only on a monitor. Everywhere else, the window does not appear at all.
+        public static void SetHiddenFromScreenShare(this Form form, bool hidden)
+        {
+            if (hidden)
+                SetWindowDisplayAffinity(form.Handle, WDA_EXCLUDEFROMCAPTURE);
+            else
+                SetWindowDisplayAffinity(form.Handle, WDA_NONE);
         }
     }
 }
