@@ -136,6 +136,8 @@ namespace ObjectEditor
             keyEditorField.Category = keyCategory;
             keyEditorField.Description = keyEditorField.ListDescription = keyDescription;
             keyEditorField.SortIndex = keySortIndex;
+            //Update sorting to reflect the change in the Key's SortIndex
+            fields = fields.OrderBy(field => field.SortIndex).ToList();
 
             Dictionary<string, List<ColumnInfo>> Category_ColumnInfos = new Dictionary<string, List<ColumnInfo>>();
             foreach (EditorField field in fields)
