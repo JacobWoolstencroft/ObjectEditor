@@ -212,7 +212,7 @@ namespace ObjectEditor
                 if (field is EditorValueField valueField)
                 {
                     //The Key will be the only field in the top-level, so look for a field with no parent members
-                    if (valueField.ValueField.ParentMembers.Count == 0)
+                    if (valueField.ValueField != null && valueField.ValueField.ParentMembers.Count == 0)
                         return field;
                 }
             }

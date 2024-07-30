@@ -53,6 +53,11 @@ namespace ObjectEditor.Tests.Classes
         [ClickableButtonMethod(Category = "Buttons")]
         void XMinus() => _x--;
 
+        [ClickableButtonMethod(Category = "ERROR", Description = "Errored editable field", VisibilityFlagMember = "Non-Existent Member", SortIndex = -100)]
+        void _testMethod()
+        {
+        }
+
         public JsonToken Pack()
         {
             JsonMapping map = new JsonMapping();
