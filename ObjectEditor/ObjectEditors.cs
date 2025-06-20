@@ -86,6 +86,8 @@ namespace ObjectEditor
             editorInfo.StringLists = StringLists;
             editorInfo.ObjectLists = ObjectLists;
             editorInfo.Editable = Editable;
+            if (objectDict == null)
+                return DialogResult.Abort;
 
             using (frmObjectDictionaryEditor<T> f = new frmObjectDictionaryEditor<T>(Title, objectDict, editorInfo, importFunction, exportFunction))
             {
@@ -103,6 +105,8 @@ namespace ObjectEditor
         /// <returns></returns>
         public static DialogResult ShowDictionaryEditor<T>(string Title, Dictionary<string, T> objectDict, ObjectEditorInfo editorInfo, ImportDictionaryDelegate<T> importFunction = null, ExportDictionaryDelegate<T> exportFunction = null) where T : ICloneable, new()
         {
+            if (objectDict == null)
+                return DialogResult.Abort;
             if (editorInfo == null)
                 editorInfo = new ObjectEditorInfo();
             using (frmObjectDictionaryEditor<T> f = new frmObjectDictionaryEditor<T>(Title, objectDict, editorInfo, importFunction, exportFunction))
@@ -127,6 +131,8 @@ namespace ObjectEditor
             editorInfo.StringLists = StringLists;
             editorInfo.ObjectLists = ObjectLists;
             editorInfo.Editable = Editable;
+            if (objectList == null)
+                return DialogResult.Abort;
 
             using (frmObjectListEditor<T> f = new frmObjectListEditor<T>(Title, objectList, editorInfo, importFunction, exportFunction))
             {
@@ -146,6 +152,8 @@ namespace ObjectEditor
         {
             if (editorInfo == null)
                 editorInfo = new ObjectEditorInfo();
+            if (objectList == null)
+                return DialogResult.Abort;
             using (frmObjectListEditor<T> f = new frmObjectListEditor<T>(Title, objectList, editorInfo, importFunction, exportFunction))
             {
                 return f.ShowDialog();
