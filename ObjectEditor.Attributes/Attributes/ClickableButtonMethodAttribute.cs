@@ -12,5 +12,6 @@ namespace ObjectEditor.Attributes
         public string Text = null;
         public string DisplayField = null;
         public string EnabledFlagMember = null;
+        public string ToolTipText = null;
     }
 }

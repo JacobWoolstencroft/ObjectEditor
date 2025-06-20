@@ -19,6 +19,7 @@ namespace ObjectEditor
         public string Category;
         public string Description;
         public string ListDescription;
+        public string ToolTipText;
         internal FieldData VisibilityFlagMember = null;
         internal FieldData EnabledFlagMember = null;
         internal EditorSubField ParentField = null;
@@ -197,6 +198,7 @@ namespace ObjectEditor
                         valueField.OnButtonClickMethod = OnButtonClickMethod;
                         valueField.ValidateField = ValidateField;
                         valueField.ButtonText = editableField.ButtonText;
+                        valueField.ToolTipText = editableField.ToolTipText;
 
                         editorField = valueField;
                     }
@@ -223,6 +225,7 @@ namespace ObjectEditor
                         editorField = new EditorButtonMethodField(Description, category, sortIndex, text, Method, DisplayField);
 
                         editorField.EnabledFlagMember = EnabledField;
+                        editorField.ToolTipText = buttonAttribute.ToolTipText;
                     }
                     if (editorField != null)
                     {

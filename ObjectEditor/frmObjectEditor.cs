@@ -134,10 +134,14 @@ namespace ObjectEditor
             DataGridViewRow row = new DataGridViewRow();
             DataGridViewTextBoxCell label = new DataGridViewTextBoxCell();
             label.Value = field.Description;
+            if (field.ToolTipText != null)
+                label.ToolTipText = field.ToolTipText;
             row.Cells.Add(label);
             label.ReadOnly = true;
 
             DataGridViewCell cell = field.CreateDataGridViewCell(ObjectBeingEditted);
+            if (field.ToolTipText != null)
+                cell.ToolTipText = field.ToolTipText;
             row.Cells.Add(cell);
             if ((field is EditorValueField valueField && valueField.IsReadOnly) || !editorInfo.Editable)
                 cell.ReadOnly = true;

@@ -16,5 +16,6 @@ namespace ObjectEditor.Attributes
 
         public string OnButtonClickMethod = null;
         public string ButtonText = "...";
+        public string ToolTipText = null;
     }
 }
