@@ -12,7 +12,9 @@ namespace ObjectEditor.Attributes
         NoChange,
         Trim,
         Password,
+        [Obsolete("Use EditableDropDownField instead")]
         DropDownList,
+        [Obsolete("Use EditableDropDownField instead")]
         DropDownObjectList
     }
 }
