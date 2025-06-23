@@ -173,6 +173,23 @@ namespace ObjectEditor
 
                         editorField = CreateListEditorField(memberType, Description, category, sortIndex, emptyListMode, ValueField, DisplayField, editorInfo);
                     }
+                    else if (attribute is EditableDropDownFieldAttribute dropDown)
+                    {
+                        string nullValueDescriptor = defaults.NullValueDescriptor;
+
+                        FieldData ValueField = new FieldData(ParentMembers, member);
+                        FieldData ValidateField = FindBoolFlag("ValidateField", ParentType, ParentMembers, dropDown.ValidateField);
+                        FieldData OptionsField = FindListField("OptionsField", memberType, ParentType, ParentMembers, dropDown.OptionsField);
+
+                        MethodData OnChangeMethod = FindMethod("OnChangeMethod", ParentType, ParentMembers, dropDown.OnChangeMethod);
+
+                        EditorValueField valueField = CreateEditorDropDownField(memberType, Description, category, sortIndex, OptionsField, nullValueDescriptor, ValueField, editorInfo);
+                        valueField.OnChangeMethod = OnChangeMethod;
+                        valueField.ValidateField = ValidateField;
+                        valueField.ToolTipText = dropDown.ToolTipText;
+
+                        editorField = valueField;
+                    }
                     else if (attribute is EditableFieldAttribute editableField)
                     {
                         EmptyStringModes emptyStringMode = defaults.EmptyStringMode;
@@ -189,11 +206,12 @@ namespace ObjectEditor
 
                         FieldData ValueField = new FieldData(ParentMembers, member);
                         FieldData ValidateField = FindBoolFlag("ValidateField", ParentType, ParentMembers, editableField.ValidateField);
+                        FieldData StringOptionsField = FindStringListField("StringOptionsField", ParentType, ParentMembers, editableField.StringOptionsField);
 
                         MethodData OnChangeMethod = FindMethod("OnChangeMethod", ParentType, ParentMembers, editableField.OnChangeMethod);
                         MethodData OnButtonClickMethod = FindMethod("OnButtonClickMethod", ParentType, ParentMembers, editableField.OnButtonClickMethod);
 
-                        EditorValueField valueField = CreateEditorValueField(memberType, Description, category, sortIndex, emptyStringMode, stringMode, dropDownListKey, nullValueDescriptor, ValueField, editorInfo);
+                        EditorValueField valueField = CreateEditorValueField(memberType, Description, category, sortIndex, emptyStringMode, stringMode, dropDownListKey, nullValueDescriptor, ValueField, editorInfo, StringOptionsField);
                         valueField.OnChangeMethod = OnChangeMethod;
                         valueField.OnButtonClickMethod = OnButtonClickMethod;
                         valueField.ValidateField = ValidateField;
@@ -260,6 +278,44 @@ namespace ObjectEditor
                 throw new Exception(FlagName + " " + ParentType.FullName + "." + MemberName + " is not bool");
             return new FieldData(ParentMembers, members[0]);
         }
+        private static FieldData FindStringListField(string FieldName, Type ParentType, List<MemberInfo> ParentMembers, string MemberName)
+        {
+            if (string.IsNullOrEmpty(MemberName))
+                return null;
+
+            MemberInfo[] members = ParentType.GetMember(MemberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField | BindingFlags.GetProperty);
+            if (members == null || members.Length < 1)
+                throw new Exception(FieldName + " " + ParentType.FullName + "." + MemberName + " not found");
+            if (members[0] is PropertyInfo property && property.PropertyType != typeof(List<string>) && property.PropertyType != typeof(string[]))
+                throw new Exception(FieldName + " " + ParentType.FullName + "." + MemberName + " is not a List<string> or string[]");
+            if (members[0] is FieldInfo field && field.FieldType != typeof(List<string>) && field.FieldType != typeof(string[]))
+                throw new Exception(FieldName + " " + ParentType.FullName + "." + MemberName + " is not a List<string> or string[]");
+            return new FieldData(ParentMembers, members[0]);
+        }
+        private static FieldData FindListField(string FieldName, Type memberType, Type ParentType, List<MemberInfo> ParentMembers, string MemberName)
+        {
+            if (string.IsNullOrEmpty(MemberName))
+                return null;
+
+            MemberInfo[] members = ParentType.GetMember(MemberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField | BindingFlags.GetProperty);
+            if (members == null || members.Length < 1)
+                throw new Exception(FieldName + " " + ParentType.FullName + "." + MemberName + " not found");
+
+            if (members[0] is PropertyInfo property)
+            {
+                if (property.PropertyType == typeof(List<>).MakeGenericType(memberType) || property.PropertyType == memberType.MakeArrayType())
+                    return new FieldData(ParentMembers, members[0]);
+                throw new Exception(FieldName + " " + ParentType.FullName + "." + MemberName + " is not a List<" + memberType.Name + "> or " + memberType.Name + "[]");
+            }
+            else if (members[0] is FieldInfo field)
+            {
+                if (field.FieldType == typeof(List<>).MakeGenericType(memberType) || field.FieldType == memberType.MakeArrayType())
+                    return new FieldData(ParentMembers, members[0]);
+                throw new Exception(FieldName + " " + ParentType.FullName + "." + MemberName + " is not a List<" + memberType.Name + "> or " + memberType.Name + "[]");
+            }
+
+            throw new Exception(FieldName + " " + ParentType.FullName + "." + MemberName + " is not a readable Field or Property");
+        }
         private static FieldData FindField(string AttributeFieldName, Type ParentType, List<MemberInfo> ParentMembers, string MemberName)
         {
             if (string.IsNullOrEmpty(MemberName))
@@ -292,7 +348,7 @@ namespace ObjectEditor
             return new MethodData(ParentMembers, methodInfo);
         }
 
-        private static EditorValueField CreateEditorValueField(Type memberType, string Description, string Category, double SortIndex, EmptyStringModes EmptyStringMode, StringModes StringMode, string DropDownListKey, string NullValueDescriptor, FieldData ValueField, ObjectEditorInfo editorInfo)
+        private static EditorValueField CreateEditorValueField(Type memberType, string Description, string Category, double SortIndex, EmptyStringModes EmptyStringMode, StringModes StringMode, string DropDownListKey, string NullValueDescriptor, FieldData ValueField, ObjectEditorInfo editorInfo, FieldData StringOptionsField)
         {
             EditorValueField editorValueField = null;
 
@@ -374,6 +430,26 @@ namespace ObjectEditor
 
             if (editorValueField == null)
                 throw new Exception("UNKNOWN TYPE - " + memberType.ToString());
+
+            editorValueField.ValueField = ValueField;
+            return editorValueField;
+        }
+        private static EditorValueField CreateEditorDropDownField(Type memberType, string Description, string Category, double SortIndex, FieldData OptionsField, string NullValueDescriptor, FieldData ValueField, ObjectEditorInfo editorInfo)
+        {
+            EditorValueField editorValueField = null;
+
+            if (OptionsField == null)
+                throw new Exception("OptionsField must be specified");
+
+            if (memberType == typeof(string))
+            {
+                editorValueField = new EditorComboStringField(Description, Category, SortIndex, OptionsField, NullValueDescriptor, ValueField);
+            }
+
+            if (editorValueField == null)
+            {
+                editorValueField = new EditorComboObjectField(Description, Category, SortIndex, OptionsField, NullValueDescriptor, ValueField);
+            }
 
             editorValueField.ValueField = ValueField;
             return editorValueField;

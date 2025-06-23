@@ -11,6 +11,10 @@ namespace ObjectEditor.Attributes
         public EmptyStringModes EmptyStringMode = EmptyStringModes.Unspecified;
         public StringModes StringMode = StringModes.Unspecified;
         public string DropDownListKey;
+        /// <summary>
+        /// When StringMode is set to DropDownList, the field specified by this attribute will be used to retrieve the values that will appear in that list.  The field should be either List&lt;string&gt; or string[].
+        /// </summary>
+        public string StringOptionsField = null;
         public string OnChangeMethod = null;
         public string ValidateField = null;
 

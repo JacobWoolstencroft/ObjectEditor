@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ClickableButtonMethodAttribute.cs" />
+    <Compile Include="Attributes\EditableDropDownFieldAttribute.cs" />
     <Compile Include="Attributes\EditableFieldAttribute.cs" />
     <Compile Include="Attributes\EditableListAttribute.cs" />
     <Compile Include="Attributes\EditableSubFieldAttribute.cs" />

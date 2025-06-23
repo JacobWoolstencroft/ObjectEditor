@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Collections;
 
 namespace ObjectEditor
 {
@@ -20,6 +21,17 @@ namespace ObjectEditor
                 else if (member is PropertyInfo property)
                     return !property.CanWrite;
                 return true;
+            }
+        }
+        public Type memberType
+        {
+            get
+            {
+                if (member is FieldInfo field)
+                    return field.FieldType;
+                else if (member is PropertyInfo property)
+                    return property.PropertyType;
+                return null;
             }
         }
 
@@ -56,6 +68,57 @@ namespace ObjectEditor
                     return property.GetValue(obj);
                 return null;
             }
+            return null;
+        }
+        public List<string> GetValue_StringList(object ObjectBeingEditted)
+        {
+            object obj = GetValue(ObjectBeingEditted);
+            if (obj != null)
+            {
+                if (obj is List<string> list)
+                    return list;
+                if (obj is string[] array)
+                    return array.ToList();
+            }
+            return null;
+        }
+        public List<object> GetValue_ObjectList(object ObjectBeingEditted, Type memberType)
+        {
+            object obj = GetValue(ObjectBeingEditted);
+            if (obj != null)
+            {
+                if (obj is Array arr)
+                {
+                    List<object> r = new List<object>();
+                    foreach (object o in arr)
+                    {
+                        if (o == null || memberType.IsAssignableFrom(o.GetType()))
+                            r.Add(o);
+                        else
+                            throw new Exception("Invalid type cast - Can not cast from " + o.GetType().FullName + " to " + memberType.FullName);
+                    }
+                    return r;
+                }
+                else if (obj is IEnumerable list)
+                {
+                    List<object> r = new List<object>();
+                    foreach (object o in list)
+                    {
+                        if (o == null || memberType.IsAssignableFrom(o.GetType()))
+                            r.Add(o);
+                        else
+                            throw new Exception("Invalid type cast - Can not cast from " + o.GetType().FullName + " to " + memberType.FullName);
+                    }
+                    return r;
+                }
+            }
+            return null;
+        }
+        public bool? GetValue_Bool(object ObjectBeingEditted)
+        {
+            object obj = GetValue(ObjectBeingEditted);
+            if (obj is bool b)
+                return b;
             return null;
         }
         public void SetValue(object ObjectBeingEditted, object val)
