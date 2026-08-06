@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ObjectEditor.Attributes;
+using ObjectEditor.Tests.Classes;
 
 namespace ObjectEditor.Tests
 {
@@ -83,5 +84,8 @@ namespace ObjectEditor.Tests
             x1 = rnd.Next(1000);
         }
         bool x2Visible => x1 >= 500;
+
+        [ListEditor(Category = "List Editing", Description = "Test List", EmptyListMode = EmptyListModes.Null)]
+        List<ListTestClass> TestList = null;
     }
 }

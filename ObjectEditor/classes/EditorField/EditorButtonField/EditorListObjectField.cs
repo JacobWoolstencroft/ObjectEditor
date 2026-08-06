@@ -27,14 +27,18 @@ namespace ObjectEditor
         }
         public override string GetButtonText(object ObjectBeingEditted)
         {
+            object value;
             if (DisplayField != null)
             {
-                return DisplayField.GetValue(ObjectBeingEditted).ToString();
+                value = DisplayField.GetValue(ObjectBeingEditted);
             }
             else
             {
-                return ValueField.GetValue(ObjectBeingEditted).ToString();
+                value = ValueField.GetValue(ObjectBeingEditted);
             }
+            if (value == null)
+                return "";
+            return value.ToString();
         }
         public static List<T> Copy(List<T> list)
         {
@@ -55,6 +59,8 @@ namespace ObjectEditor
         public override void Click(object ObjectBeingEditted)
         {
             List<T> list = Copy((List<T>)ValueField.GetValue(ObjectBeingEditted));
+            if (list == null)
+                list = new List<T>();
             if (ObjectEditors.ShowListEditor("Edit " + Description, list, editorInfo) == DialogResult.OK)
             {
                 if (list.Count == 0)
