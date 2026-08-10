@@ -237,18 +237,24 @@ namespace ObjectEditor
                 return;
             UpdatingFlags = true;
 
-            foreach (FieldCell fieldCell in FieldCells)
+            try
             {
-                bool visible = fieldCell.field.IsVisible(ObjectBeingEditted);
-                DataGridViewRow row = fieldCell.cell.OwningRow;
-                if (visible != row.Visible)
+                foreach (FieldCell fieldCell in FieldCells)
                 {
-                    if (fieldCell.cell.DataGridView.CurrentRow == row)
-                        fieldCell.cell.DataGridView.CurrentCell = null;
-                    row.Visible = visible;
+                    bool visible = fieldCell.field.IsVisible(ObjectBeingEditted);
+                    DataGridViewRow row = fieldCell.cell.OwningRow;
+                    if (visible != row.Visible)
+                    {
+                        if (fieldCell.cell.DataGridView.CurrentRow == row)
+                            fieldCell.cell.DataGridView.CurrentCell = null;
+                        row.Visible = visible;
+                    }
                 }
             }
-            UpdatingFlags = false;
+            finally
+            {
+                UpdatingFlags = false;
+            }
         }
 
         private void btnOK_Click(object sender, EventArgs e)
