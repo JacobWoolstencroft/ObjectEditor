@@ -60,6 +60,7 @@
             this.tabCategories.SelectedIndex = 0;
             this.tabCategories.Size = new System.Drawing.Size(568, 384);
             this.tabCategories.TabIndex = 28;
+            this.tabCategories.SelectedIndexChanged += new System.EventHandler(this.tabCategories_SelectedIndexChanged);
             // 
             // frmObjectEditor
             // 

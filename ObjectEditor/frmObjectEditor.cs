@@ -26,6 +26,8 @@ namespace ObjectEditor
         }
 
         private List<FieldCell> FieldCells;
+        private List<DataGridView> Grids;
+        private List<TabPage> Tabs;
 
         private ObjectEditorInfo editorInfo = new ObjectEditorInfo();
         private object ObjectBeingEditted = null;
@@ -57,6 +59,8 @@ namespace ObjectEditor
             }
 
             FieldCells = new List<FieldCell>();
+            Grids = new List<DataGridView>();
+            Tabs = new List<TabPage>();
 
             HashSet<string> CategoriesAdded = new HashSet<string>();
             if (PreferredCategoryOrder != null)
@@ -123,6 +127,9 @@ namespace ObjectEditor
             grid.CellClick += Grid_CellClick;
             grid.CellDoubleClick += Grid_CellDoubleClick;
             grid.CurrentCellDirtyStateChanged += Grid_CurrentCellDirtyStateChanged;
+
+            Grids.Add(grid);
+            Tabs.Add(tab);
         }
 
         private void Grid_UpdateValues()
@@ -250,13 +257,52 @@ namespace ObjectEditor
                         row.Visible = visible;
                     }
                 }
+
+                UpdateVisibleTabs();
             }
             finally
             {
                 UpdatingFlags = false;
             }
         }
-
+        private void UpdateVisibleTabs()
+        {
+            List<TabPage> VisibleTabs = new List<TabPage>();
+            foreach (DataGridView grid in Grids)
+            {
+                if (grid.Parent is TabPage tab)
+                {
+                    int visibleRows = 0;
+                    foreach (DataGridViewRow row in grid.Rows)
+                    {
+                        if (row.Visible)
+                            visibleRows++;
+                    }
+                    if (visibleRows > 0)
+                        VisibleTabs.Add(tab);
+                }
+            }
+            foreach (TabPage tab in Tabs)
+            {
+                int VisibleIndex = VisibleTabs.IndexOf(tab);
+                if (VisibleIndex >= 0 && !tabCategories.TabPages.Contains(tab))
+                {
+                    //Add the tab
+                    if (VisibleIndex > 0)
+                    {
+                        int PreviousTabIndex = tabCategories.TabPages.IndexOf(VisibleTabs[VisibleIndex - 1]);
+                        tabCategories.TabPages.Insert(PreviousTabIndex + 1, tab);
+                    }
+                    else
+                        tabCategories.TabPages.Insert(0, tab);
+                }
+                else if (VisibleIndex < 0 && tabCategories.TabPages.Contains(tab))
+                {
+                    //Remove the tab
+                    tabCategories.TabPages.Remove(tab);
+                }
+            }
+        }
         private void btnOK_Click(object sender, EventArgs e)
         {
             DataGridViewCell InvalidCell = null;
@@ -317,6 +363,17 @@ namespace ObjectEditor
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        private void tabCategories_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Deselect each grid's current cell when the tab is changed.
+            //This prevents an editting control from holding onto an old value
+            foreach (DataGridView grid in Grids)
+            {
+                grid.EndEdit();
+                grid.CurrentCell = null;
+            }
         }
         #endregion
     }
