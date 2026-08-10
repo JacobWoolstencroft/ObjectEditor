@@ -118,6 +118,7 @@ namespace ObjectEditor
             {
                 grid.Rows.Add(SetupDataRow(field));
             }
+            grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             grid.CellValidating += DataGridView_CellValidating;
             grid.CellClick += Grid_CellClick;
             grid.CellDoubleClick += Grid_CellDoubleClick;

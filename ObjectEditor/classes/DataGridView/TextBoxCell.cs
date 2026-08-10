@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ObjectEditor.Attributes;
+using ObjectEditor.classes.DataGridView;
 
 namespace ObjectEditor
 {
@@ -43,7 +44,7 @@ namespace ObjectEditor
                 if (ButtonText != null)
                     return typeof(TextboxButtonCellEditingControl);
                 else
-                    return typeof(DataGridViewTextBoxEditingControl);
+                    return typeof(TextBoxCellEditingControl);
             }
         }
         public override void InitializeEditingControl(int rowIndex, object initialFormattedValue, DataGridViewCellStyle dataGridViewCellStyle)
@@ -59,10 +60,12 @@ namespace ObjectEditor
                     labelButton.LabelText = this.Value.ToString();
                 else
                     labelButton.LabelText = null;
+                labelButton.SetMultiline(StringMode == StringModes.Multiline);
             }
-            else if (DataGridView.EditingControl is DataGridViewTextBoxEditingControl txt)
+            else if (DataGridView.EditingControl is TextBoxCellEditingControl txt)
             {
                 txt.UseSystemPasswordChar = (StringMode == StringModes.Password);
+                txt.SetMultiline(StringMode == StringModes.Multiline);
             }
         }
         public void Click(TextboxButtonCellEditingControl control)

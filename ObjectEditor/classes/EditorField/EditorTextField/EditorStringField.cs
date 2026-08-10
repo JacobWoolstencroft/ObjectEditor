@@ -67,6 +67,10 @@ namespace ObjectEditor
             if (cell is TextBoxCell txt)
             {
                 txt.StringMode = StringMode;
+                if (StringMode == StringModes.Multiline)
+                {
+                    txt.Style.WrapMode = DataGridViewTriState.True;
+                }
             }
 
             string str = GetValue(ObjectBeingEditted);

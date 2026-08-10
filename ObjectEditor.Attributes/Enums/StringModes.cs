@@ -15,6 +15,7 @@ namespace ObjectEditor.Attributes
         [Obsolete("Use EditableDropDownField instead")]
         DropDownList,
         [Obsolete("Use EditableDropDownField instead")]
-        DropDownObjectList
+        DropDownObjectList,
+        Multiline
     }
 }

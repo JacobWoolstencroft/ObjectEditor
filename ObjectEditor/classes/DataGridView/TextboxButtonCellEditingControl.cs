@@ -20,6 +20,10 @@ namespace ObjectEditor
         {
             ValueChanged = true;
             this.EditingControlDataGridView.NotifyCurrentCellDirty(true);
+            if (this.textBox1.Multiline)
+            {
+                this.EditingControlDataGridView.CurrentCell.Value = this.textBox1.Text;
+            }
         }
 
         public object EditingControlFormattedValue
@@ -60,13 +64,27 @@ namespace ObjectEditor
             this.LabelBackColor = cellStyle.BackColor;
         }
 
+        public void SetMultiline(bool multi)
+        {
+            this.textBox1.Multiline = multi;
+            this.textBox1.AcceptsReturn = multi;
+        }
         public bool EditingControlWantsInputKey(Keys keyData, bool dataGridViewWantsInputKey)
         {
-            switch (keyData & Keys.KeyCode)
+            if (this.textBox1.Multiline)
             {
-                default:
-                    return !dataGridViewWantsInputKey;
+                switch (keyData & Keys.KeyCode)
+                {
+                    case Keys.Return:
+                        return true;
+                    case Keys.Right:
+                    case Keys.Left:
+                    case Keys.Up:
+                    case Keys.Down:
+                        return true;
+                }
             }
+            return !dataGridViewWantsInputKey;
         }
 
         public object GetEditingControlFormattedValue(DataGridViewDataErrorContexts context)

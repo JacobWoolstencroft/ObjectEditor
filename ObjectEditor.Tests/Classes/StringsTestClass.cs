@@ -12,6 +12,34 @@ namespace ObjectEditor.Tests
         [EditableSubField(Category = "String List")]
         StringListTest StringList = new StringListTest();
 
+        [EditableField(Category = "Multiline", StringMode = StringModes.Multiline)]
+        string MultilineText;
+
+        [EditableField(Category = "Multiline", StringMode = StringModes.Multiline, ButtonText = "Random text", OnButtonClickMethod = "RandomText")]
+        string MultilineText2;
+        void RandomText()
+        {
+            Random rnd = new Random();
+            int lines = rnd.Next(1, 9);
+            string txt = "";
+            string RandomChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ";
+            char c;
+
+            for (int x = 0; x < lines; x++)
+            {
+                if (x > 0)
+                    txt += Environment.NewLine;
+
+                int lineLength = rnd.Next(0, 20);
+                for (int y = 0; y < lineLength; y++)
+                {
+                    c = RandomChars[rnd.Next(0, RandomChars.Length)];
+                    txt += c;
+                }
+            }
+            MultilineText2 = txt;
+        }
+
         class StringListTest
         {
             [EditableField(EmptyStringMode = EmptyStringModes.Null)]

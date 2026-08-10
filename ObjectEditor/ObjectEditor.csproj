@@ -53,6 +53,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="classes\DataGridView\TextBoxCell.cs" />
+    <Compile Include="classes\DataGridView\TextBoxCellEditingControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="classes\EditorField\EditorButtonField\EditorButtonField.cs" />
     <Compile Include="classes\EditorField\EditorButtonField\EditorButtonMethodField.cs" />
     <Compile Include="classes\EditorField\EditorComboField\EditorBoolField.cs" />
