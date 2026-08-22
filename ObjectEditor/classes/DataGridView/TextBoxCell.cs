@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -19,16 +20,21 @@ namespace ObjectEditor
         public delegate void ClickEvent(TextBoxCell cell);
         public event ClickEvent Clicked;
 
+        protected override object GetFormattedValue(object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
+        {
+            if (StringMode == StringModes.Password)
+            {
+                if (value is string s)
+                    return new string(EditorField.PassChar, s.Length);
+                return "";
+            }
+            return base.GetFormattedValue(value, rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
+        }
         protected override void Paint(Graphics graphics, System.Drawing.Rectangle clipBounds, System.Drawing.Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
         {
             if (formattedValue is string s)
             {
-                if (StringMode == StringModes.Password)
-                {
-                    if (s.Length > 0)
-                        formattedValue = new string(EditorField.PassChar, s.Length);
-                }
-                else if (EmptyString != null && s.Length == 0)
+                if (EmptyString != null && s.Length == 0)
                 {
                     formattedValue = EmptyString;
                     if (this.DataGridView is DataGridViewExtended grid)
@@ -65,6 +71,10 @@ namespace ObjectEditor
             else if (DataGridView.EditingControl is TextBoxCellEditingControl txt)
             {
                 txt.UseSystemPasswordChar = (StringMode == StringModes.Password);
+                if (this.Value != null)
+                    txt.Text = this.Value.ToString();
+                else
+                    txt.Text = null;
                 txt.SetMultiline(StringMode == StringModes.Multiline);
             }
         }
